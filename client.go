@@ -12,16 +12,22 @@ type Client struct {
 	fpURL              string
 }
 
-// NewClient creates a new FoxyProxyReseller client, if no resellerName is provided
+type NewClientParams struct {
+	Username     string
+	Password     string
+	ResellerName string
+}
+
+// NewClient creates a new FoxyProxyReseller client, if no ResellerName is provided
 // it defaults to using the reseller test endpoint.
-func NewClient(username, password, resellerName string) *Client {
+func NewClient(params *NewClientParams) *Client {
 	cl := &Client{
-		Username: username,
-		Password: password,
+		Username: params.Username,
+		Password: params.Password,
 		fpURL:    "https://reseller.test.api.foxyproxy.com",
 	}
-	if resellerName != "" {
-		cl.fpURL = fmt.Sprintf("https://%s.reseller.api.foxyproxy.com", resellerName)
+	if params.ResellerName != "" {
+		cl.fpURL = fmt.Sprintf("https://%s.reseller.api.foxyproxy.com", params.ResellerName)
 	}
 
 	return cl
