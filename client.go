@@ -9,28 +9,21 @@ import (
 
 type Client struct {
 	Username, Password string
-	fpURL              string
+	EndpointBaseURL    string
 }
 
 type NewClientParams struct {
-	Username     string
-	Password     string
-	ResellerName string
+	Username        string
+	Password        string
+	EndpointBaseURL string
 }
 
-// NewClient creates a new FoxyProxyReseller client, if no ResellerName is provided
-// it defaults to using the reseller test endpoint.
 func NewClient(params *NewClientParams) *Client {
-	cl := &Client{
-		Username: params.Username,
-		Password: params.Password,
-		fpURL:    "https://reseller.test.api.foxyproxy.com",
+	return &Client{
+		Username:        params.Username,
+		Password:        params.Password,
+		EndpointBaseURL: params.EndpointBaseURL,
 	}
-	if params.ResellerName != "" {
-		cl.fpURL = fmt.Sprintf("https://%s.reseller.api.foxyproxy.com", params.ResellerName)
-	}
-
-	return cl
 }
 
 func (c *Client) GetActiveNodeConnectionsByAccount(nodeName string) ([]*NodeConnection, error) {
