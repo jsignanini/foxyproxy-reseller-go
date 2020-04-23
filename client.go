@@ -10,10 +10,12 @@ import (
 type Client struct {
 	username, password string
 	endpointBaseURL    string
+	domainHeader       string
 }
 
 type NewClientParams struct {
 	Username, Password string
+	DomainHeader       string
 	EndpointBaseURL    string
 }
 
@@ -22,6 +24,7 @@ func NewClient(params *NewClientParams) *Client {
 	return &Client{
 		username:        params.Username,
 		password:        params.Password,
+		domainHeader:    params.DomainHeader,
 		endpointBaseURL: params.EndpointBaseURL,
 	}
 }

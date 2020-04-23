@@ -14,7 +14,7 @@ func (c *Client) doRequest(path string) (*http.Response, error) {
 	req.SetBasicAuth(c.username, c.password)
 	req.Header.Add("Accept", ContentType)
 	req.Header.Add("Content-Type", ContentType)
-	req.Header.Add("X-DOMAIN", "ghostery")
+	req.Header.Add("X-DOMAIN", c.domainHeader)
 	res, err := client.Do(req)
 	if err != nil {
 		return nil, err
