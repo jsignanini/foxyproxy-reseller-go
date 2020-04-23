@@ -18,6 +18,7 @@ type NewClientParams struct {
 }
 
 func NewClient(params *NewClientParams) *Client {
+	// TODO handle missing parameters
 	return &Client{
 		username:        params.Username,
 		password:        params.Password,
