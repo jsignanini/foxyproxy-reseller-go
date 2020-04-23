@@ -8,21 +8,20 @@ import (
 )
 
 type Client struct {
+	username, password string
+	endpointBaseURL    string
+}
+
+type NewClientParams struct {
 	Username, Password string
 	EndpointBaseURL    string
 }
 
-type NewClientParams struct {
-	Username        string
-	Password        string
-	EndpointBaseURL string
-}
-
 func NewClient(params *NewClientParams) *Client {
 	return &Client{
-		Username:        params.Username,
-		Password:        params.Password,
-		EndpointBaseURL: params.EndpointBaseURL,
+		username:        params.Username,
+		password:        params.Password,
+		endpointBaseURL: params.EndpointBaseURL,
 	}
 }
 

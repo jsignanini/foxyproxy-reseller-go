@@ -7,11 +7,11 @@ import (
 
 func (c *Client) doRequest(path string) (*http.Response, error) {
 	client := http.Client{}
-	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s", c.EndpointBaseURL, path), nil)
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s", c.endpointBaseURL, path), nil)
 	if err != nil {
 		return nil, err
 	}
-	req.SetBasicAuth(c.Username, c.Password)
+	req.SetBasicAuth(c.username, c.password)
 	req.Header.Add("Accept", ContentType)
 	req.Header.Add("Content-Type", ContentType)
 	req.Header.Add("X-DOMAIN", "ghostery")
