@@ -8,13 +8,24 @@ import (
 )
 
 type Client struct {
-	Username, Password string
+	username, password string
+	domainHeader       string
+	endpointBaseURL    string
 }
 
-func NewClient(username, password string) *Client {
+type NewClientParams struct {
+	Username, Password string
+	DomainHeader       string
+	EndpointBaseURL    string
+}
+
+func NewClient(params *NewClientParams) *Client {
+	// TODO handle missing parameters
 	return &Client{
-		Username: username,
-		Password: password,
+		username:        params.Username,
+		password:        params.Password,
+		domainHeader:    params.DomainHeader,
+		endpointBaseURL: params.EndpointBaseURL,
 	}
 }
 

@@ -28,7 +28,7 @@ func (n *Node) GetClient() *Client {
 	if n.client != nil {
 		return n.client
 	}
-	return NewClient("", "")
+	return NewClient(&NewClientParams{})
 }
 
 func (n *Node) GetActiveConnectionsByAccount() ([]*NodeConnection, error) {
