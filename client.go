@@ -12,14 +12,16 @@ type Client struct {
 	fpURL              string
 }
 
-func NewClient(environment, username, password string) *Client {
+// NewClient creates a new FoxyProxyReseller client, if no resellerName is provided
+// it defaults to using the reseller test endpoint.
+func NewClient(username, password, resellerName string) *Client {
 	cl := &Client{
 		Username: username,
 		Password: password,
 		fpURL:    "https://reseller.test.api.foxyproxy.com",
 	}
-	if environment == "production" {
-		cl.fpURL = "https://ghostery.reseller.api.foxyproxy.com"
+	if resellerName != "" {
+		cl.fpURL = fmt.Sprintf("https://%s.reseller.api.foxyproxy.com", resellerName)
 	}
 
 	return cl
