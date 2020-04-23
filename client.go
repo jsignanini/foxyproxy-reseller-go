@@ -9,13 +9,20 @@ import (
 
 type Client struct {
 	Username, Password string
+	fpURL              string
 }
 
-func NewClient(username, password string) *Client {
-	return &Client{
+func NewClient(environment, username, password string) *Client {
+	cl := &Client{
 		Username: username,
 		Password: password,
+		fpURL:    "https://reseller.test.api.foxyproxy.com",
 	}
+	if environment == "production" {
+		cl.fpURL = "https://ghostery.reseller.api.foxyproxy.com"
+	}
+
+	return cl
 }
 
 func (c *Client) GetActiveNodeConnectionsByAccount(nodeName string) ([]*NodeConnection, error) {

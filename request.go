@@ -7,7 +7,7 @@ import (
 
 func (c *Client) doRequest(path string) (*http.Response, error) {
 	client := http.Client{}
-	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("https://ghostery.reseller.api.foxyproxy.com%s", path), nil)
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s", c.fpURL, path), nil)
 	if err != nil {
 		return nil, err
 	}
