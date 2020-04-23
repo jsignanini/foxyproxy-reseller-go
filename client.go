@@ -9,8 +9,8 @@ import (
 
 type Client struct {
 	username, password string
-	endpointBaseURL    string
 	domainHeader       string
+	endpointBaseURL    string
 }
 
 type NewClientParams struct {
