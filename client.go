@@ -262,9 +262,7 @@ func (c *Client) getAccountsByNode(nodeName string, index, size int) ([]*Account
 
 // https://reseller.api.foxyproxy.com/#_count_accounts
 func (c *Client) CountAccounts() (int, error) {
-	type countRes struct {
-		Count int `json:"count"`
-	}
+
 	res, err := c.doRequest(http.MethodGet, "/accounts/count/", nil)
 	if err != nil {
 		return 0, err
@@ -273,7 +271,7 @@ func (c *Client) CountAccounts() (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	resJSON := countRes{}
+	resJSON := countResponse{}
 	if err := json.Unmarshal(bodyBytes, &resJSON); err != nil {
 		return 0, err
 	}
@@ -285,7 +283,7 @@ func (c *Client) DeactivateAccount(username string) (int, error) {
 	return c.deactivateAccount(username, nil)
 }
 
-func (c *Client) deactivateAccount(username string, params *commonAPIProperties) (int, error) {
+func (c *Client) deactivateAccount(username string, params *CommonProperties) (int, error) {
 	body := []byte{}
 	if params != nil {
 		var err error
@@ -294,9 +292,7 @@ func (c *Client) deactivateAccount(username string, params *commonAPIProperties)
 			return 0, err
 		}
 	}
-	type countRes struct {
-		Count int `json:"count"`
-	}
+
 	res, err := c.doRequest(http.MethodPatch, fmt.Sprintf("/accounts/deactivate/%s/", username), body)
 	if err != nil {
 		return 0, err
@@ -305,7 +301,7 @@ func (c *Client) deactivateAccount(username string, params *commonAPIProperties)
 	if err != nil {
 		return 0, err
 	}
-	resJSON := countRes{}
+	resJSON := countResponse{}
 	if err := json.Unmarshal(bodyBytes, &resJSON); err != nil {
 		return 0, err
 	}
@@ -317,7 +313,7 @@ func (c *Client) ActivateAccount(username string) (int, error) {
 	return c.activateAccount(username, nil)
 }
 
-func (c *Client) activateAccount(username string, params *commonAPIProperties) (int, error) {
+func (c *Client) activateAccount(username string, params *CommonProperties) (int, error) {
 	body := []byte{}
 	if params != nil {
 		var err error
@@ -326,9 +322,7 @@ func (c *Client) activateAccount(username string, params *commonAPIProperties) (
 			return 0, err
 		}
 	}
-	type countRes struct {
-		Count int `json:"count"`
-	}
+
 	res, err := c.doRequest(http.MethodPatch, fmt.Sprintf("/accounts/activate/%s/", username), body)
 	if err != nil {
 		return 0, err
@@ -337,7 +331,7 @@ func (c *Client) activateAccount(username string, params *commonAPIProperties) (
 	if err != nil {
 		return 0, err
 	}
-	resJSON := countRes{}
+	resJSON := countResponse{}
 	if err := json.Unmarshal(bodyBytes, &resJSON); err != nil {
 		return 0, err
 	}
@@ -349,7 +343,7 @@ func (c *Client) UpdatePassword(username, password string) (int, error) {
 	return c.updatePassword(username, password, nil)
 }
 
-func (c *Client) updatePassword(username, password string, params *commonAPIProperties) (int, error) {
+func (c *Client) updatePassword(username, password string, params *CommonProperties) (int, error) {
 	// validate input
 	if len(password) < 3 {
 		return 0, fmt.Errorf("password must be more than 3 characters long")
@@ -360,15 +354,13 @@ func (c *Client) updatePassword(username, password string, params *commonAPIProp
 
 	type updatePasswordBody struct {
 		Password string `json:"password"`
-		*commonAPIProperties
+		*CommonProperties
 	}
 	upb := updatePasswordBody{
-		Password:            password,
-		commonAPIProperties: params,
+		Password:         password,
+		CommonProperties: params,
 	}
-	type countRes struct {
-		Count int `json:"count"`
-	}
+
 	jsonBody, err := json.Marshal(upb)
 	if err != nil {
 		return 0, err
@@ -385,7 +377,7 @@ func (c *Client) updatePassword(username, password string, params *commonAPIProp
 	if err != nil {
 		return 0, err
 	}
-	resJSON := countRes{}
+	resJSON := countResponse{}
 	if err := json.Unmarshal(bodyBytes, &resJSON); err != nil {
 		return 0, err
 	}
@@ -396,22 +388,20 @@ func (c *Client) updatePassword(username, password string, params *commonAPIProp
 func (c *Client) DeleteAccounts(username string, includeHistory bool) (int, error) {
 	return c.deleteAccounts(username, includeHistory, nil)
 }
-func (c *Client) deleteAccounts(username string, includeHistory bool, params *commonAPIProperties) (int, error) {
+func (c *Client) deleteAccounts(username string, includeHistory bool, params *CommonProperties) (int, error) {
 	type body struct {
 		IncludeHistory bool `json:"includeHistory"`
-		*commonAPIProperties
+		*CommonProperties
 	}
 	b := body{
-		IncludeHistory:      includeHistory,
-		commonAPIProperties: params,
+		IncludeHistory:   includeHistory,
+		CommonProperties: params,
 	}
 	bJSON, err := json.Marshal(b)
 	if err != nil {
 		return 0, err
 	}
-	type countRes struct {
-		Count int `json:"count"`
-	}
+
 	res, err := c.doRequest(http.MethodPatch, fmt.Sprintf("/accounts/activate/%s/", username), bJSON)
 	if err != nil {
 		return 0, err
@@ -420,7 +410,7 @@ func (c *Client) deleteAccounts(username string, includeHistory bool, params *co
 	if err != nil {
 		return 0, err
 	}
-	resJSON := countRes{}
+	resJSON := countResponse{}
 	if err := json.Unmarshal(bodyBytes, &resJSON); err != nil {
 		return 0, err
 	}
@@ -429,16 +419,14 @@ func (c *Client) deleteAccounts(username string, includeHistory bool, params *co
 
 // https://reseller.api.foxyproxy.com/#_copy_accounts_from_one_node_to_others
 func (c *Client) CopyAccounts(fromNode string, toNodes []string) (int, error) {
-	params := commonAPIProperties{
+	params := CommonProperties{
 		NodeNames: toNodes,
 	}
 	body, err := json.Marshal(params)
 	if err != nil {
 		return 0, err
 	}
-	type countRes struct {
-		Count int `json:"count"`
-	}
+
 	res, err := c.doRequest(http.MethodPost, fmt.Sprintf("/accounts/copy-all/%s/", fromNode), body)
 	if err != nil {
 		return 0, err
@@ -447,7 +435,7 @@ func (c *Client) CopyAccounts(fromNode string, toNodes []string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	resJSON := countRes{}
+	resJSON := countResponse{}
 	if err := json.Unmarshal(bodyBytes, &resJSON); err != nil {
 		return 0, err
 	}

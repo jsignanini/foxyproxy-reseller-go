@@ -20,6 +20,14 @@ func NewAccount(c *Client) *Account {
 	}
 }
 
+func (a *Account) GetNodeNames() []string {
+	nodeNames := []string{}
+	if a.Node != nil {
+		nodeNames = append(nodeNames, a.Node.Name)
+	}
+	return nodeNames
+}
+
 // https://reseller.api.foxyproxy.com/#_username_exists
 func (c *Client) UsernameExists(username string) (bool, error) {
 	res, err := c.doRequest(http.MethodGet, fmt.Sprintf("/accounts/exists/%s/", username), nil)
@@ -38,39 +46,33 @@ func (c *Client) UsernameExists(username string) (bool, error) {
 
 // https://reseller.api.foxyproxy.com/#_deactivate_accounts
 func (a *Account) Deactivate() (int, error) {
-	return a.client.deactivateAccount(a.Username, &commonAPIProperties{
-		NodeNames: []string{a.Node.Name},
+	return a.client.deactivateAccount(a.Username, &CommonProperties{
+		NodeNames: a.GetNodeNames(),
 	})
 }
 
 // https://reseller.api.foxyproxy.com/#_activate_accounts
 func (a *Account) Activate() (int, error) {
-	return a.client.activateAccount(a.Username, &commonAPIProperties{
-		NodeNames: []string{a.Node.Name},
+	return a.client.activateAccount(a.Username, &CommonProperties{
+		NodeNames: a.GetNodeNames(),
 	})
 }
 
 // https://reseller.api.foxyproxy.com/#_update_passwords
 func (a *Account) UpdatePassword(password string) (int, error) {
-	return a.client.updatePassword(a.Username, password, &commonAPIProperties{
-		NodeNames: []string{a.Node.Name},
+	return a.client.updatePassword(a.Username, password, &CommonProperties{
+		NodeNames: a.GetNodeNames(),
 	})
-}
-
-// https://reseller.api.foxyproxy.com/#_common_api_properties
-type commonAPIProperties struct {
-	Comment   string   `json:"comment,omitempty"`
-	NodeNames []string `json:"nodeNames,omitempty"`
 }
 
 type DeleteAccountsParams struct {
 	IncludeHistory bool `json:"includeHistory"`
-	commonAPIProperties
+	CommonProperties
 }
 
 // https://reseller.api.foxyproxy.com/#_delete_accounts
 func (a *Account) Delete(includeHistory bool) (int, error) {
-	return a.client.deleteAccounts(a.Username, includeHistory, &commonAPIProperties{
-		NodeNames: []string{a.Node.Name},
+	return a.client.deleteAccounts(a.Username, includeHistory, &CommonProperties{
+		NodeNames: a.GetNodeNames(),
 	})
 }
