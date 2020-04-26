@@ -18,7 +18,7 @@ type NodeTrafficAccount struct {
 }
 
 func (c *Client) getNodeTrafficByAccount(nodeName string, startTime, endTime time.Time) ([]*NodeTrafficAccount, error) {
-	res, err := c.doRequest(fmt.Sprintf("/nodes/%s/traffic-by-account/%d/%d", nodeName, startTime.Unix(), endTime.Unix()))
+	res, err := c.doRequest(http.MethodGet, fmt.Sprintf("/nodes/%s/traffic-by-account/%d/%d", nodeName, startTime.Unix(), endTime.Unix()), nil)
 	if err != nil {
 		return nil, err
 	}

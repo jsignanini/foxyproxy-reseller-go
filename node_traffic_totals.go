@@ -16,7 +16,7 @@ type NodeTrafficTotals struct {
 }
 
 func (c *Client) getNodeTrafficTotals(nodeName string, startTime, endTime time.Time) (*NodeTrafficTotals, error) {
-	res, err := c.doRequest(fmt.Sprintf("/nodes/%s/traffic/%d/%d", nodeName, startTime.Unix(), endTime.Unix()))
+	res, err := c.doRequest(http.MethodGet, fmt.Sprintf("/nodes/%s/traffic/%d/%d", nodeName, startTime.Unix(), endTime.Unix()), nil)
 	if err != nil {
 		return nil, err
 	}

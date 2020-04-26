@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"time"
 )
 
@@ -15,7 +16,7 @@ type NodeConnection struct {
 }
 
 func (c *Client) getActiveNodeConnectionsByAccount(nodeName string) ([]*NodeConnection, error) {
-	res, err := c.doRequest(fmt.Sprintf("/nodes/%s/connections-by-account/", nodeName))
+	res, err := c.doRequest(http.MethodGet, fmt.Sprintf("/nodes/%s/connections-by-account/", nodeName), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +33,7 @@ func (c *Client) getActiveNodeConnectionsByAccount(nodeName string) ([]*NodeConn
 }
 
 func (c *Client) getHistoricalNodeConnectionsByAccount(nodeName string, startTime, endTime time.Time) ([]*NodeConnection, error) {
-	res, err := c.doRequest(fmt.Sprintf("/nodes/%s/connections-by-account/%d/%d/", nodeName, startTime.Unix(), endTime.Unix()))
+	res, err := c.doRequest(http.MethodGet, fmt.Sprintf("/nodes/%s/connections-by-account/%d/%d/", nodeName, startTime.Unix(), endTime.Unix()), nil)
 	if err != nil {
 		return nil, err
 	}

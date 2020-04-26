@@ -16,7 +16,7 @@ type Account struct {
 
 // https://reseller.api.foxyproxy.com/#_username_exists
 func (c *Client) UsernameExists(username string) (bool, error) {
-	res, err := c.doRequest(fmt.Sprintf("/accounts/exists/%s/", username))
+	res, err := c.doRequest(http.MethodGet, fmt.Sprintf("/accounts/exists/%s/", username), nil)
 	if err != nil {
 		return false, err
 	}
@@ -35,7 +35,7 @@ func (c *Client) DeactivateAccounts(username string) (int, error) {
 	type countRes struct {
 		Count int `json:"count"`
 	}
-	res, err := c.doRequest2(http.MethodPatch, fmt.Sprintf("/accounts/deactivate/%s/", username), nil)
+	res, err := c.doRequest(http.MethodPatch, fmt.Sprintf("/accounts/deactivate/%s/", username), nil)
 	if err != nil {
 		return 0, err
 	}
@@ -55,7 +55,7 @@ func (c *Client) ActivateAccounts(username string) (int, error) {
 	type countRes struct {
 		Count int `json:"count"`
 	}
-	res, err := c.doRequest2(http.MethodPatch, fmt.Sprintf("/accounts/activate/%s/", username), nil)
+	res, err := c.doRequest(http.MethodPatch, fmt.Sprintf("/accounts/activate/%s/", username), nil)
 	if err != nil {
 		return 0, err
 	}
@@ -83,7 +83,7 @@ func (c *Client) UpdatePassword(username, password string) (int, error) {
 	type countRes struct {
 		Count int `json:"count"`
 	}
-	res, err := c.doRequest2(
+	res, err := c.doRequest(
 		http.MethodPatch,
 		fmt.Sprintf("/accounts/update-password/%s", username),
 		[]byte(fmt.Sprintf(`{ "password": "%s" }`, password)),
@@ -126,7 +126,7 @@ func (c *Client) DeleteAccounts(username string, params *DeleteAccountsParams) (
 	type countRes struct {
 		Count int `json:"count"`
 	}
-	res, err := c.doRequest2(http.MethodPatch, fmt.Sprintf("/accounts/activate/%s/", username), body)
+	res, err := c.doRequest(http.MethodPatch, fmt.Sprintf("/accounts/activate/%s/", username), body)
 	if err != nil {
 		return 0, err
 	}
@@ -153,7 +153,7 @@ func (c *Client) CopyAccounts(fromNode string, toNodes []string) (int, error) {
 	type countRes struct {
 		Count int `json:"count"`
 	}
-	res, err := c.doRequest2(http.MethodPost, fmt.Sprintf("/accounts/copy-all/%s/", fromNode), body)
+	res, err := c.doRequest(http.MethodPost, fmt.Sprintf("/accounts/copy-all/%s/", fromNode), body)
 	if err != nil {
 		return 0, err
 	}

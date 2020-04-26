@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"time"
 )
 
@@ -47,7 +48,7 @@ func (c *Client) GetAllNodes(index, size int) ([]*Node, error) {
 	}
 
 	// get nodes
-	res, err := c.doRequest(fmt.Sprintf("/nodes/?index=%d&size=%d", index, size))
+	res, err := c.doRequest(http.MethodGet, fmt.Sprintf("/nodes/?index=%d&size=%d", index, size), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +77,7 @@ func (c *Client) GetHistoricalNodeConnectionTotals(nodeName string, startTime, e
 }
 
 func (c *Client) GetNode(nodeName string) (*Node, error) {
-	res, err := c.doRequest(fmt.Sprintf("/nodes/%s", nodeName))
+	res, err := c.doRequest(http.MethodGet, fmt.Sprintf("/nodes/%s", nodeName), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +96,7 @@ func (c *Client) GetNodeCount() (int, error) {
 	type total struct {
 		Count int
 	}
-	res, err := c.doRequest("/nodes/count/")
+	res, err := c.doRequest(http.MethodGet, "/nodes/count/", nil)
 	if err != nil {
 		return 0, err
 	}
@@ -122,7 +123,7 @@ func (c *Client) getActiveNodeConnectionTotals(nodeName string) (int, error) {
 	type total struct {
 		Count int
 	}
-	res, err := c.doRequest(fmt.Sprintf("/nodes/%s/connections/", nodeName))
+	res, err := c.doRequest(http.MethodGet, fmt.Sprintf("/nodes/%s/connections/", nodeName), nil)
 	if err != nil {
 		return 0, err
 	}
@@ -138,7 +139,7 @@ func (c *Client) getActiveNodeConnectionTotals(nodeName string) (int, error) {
 }
 
 func (c *Client) getDNSSuffixes() ([]string, error) {
-	res, err := c.doRequest("/nodes/dns-suffixes/")
+	res, err := c.doRequest(http.MethodGet, "/nodes/dns-suffixes/", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -157,7 +158,7 @@ func (c *Client) getHistoricalNodeConnectionTotals(nodeName string, startTime, e
 	type total struct {
 		Count int
 	}
-	res, err := c.doRequest(fmt.Sprintf("/nodes/%s/connections/%d/%d/", nodeName, startTime.Unix(), endTime.Unix()))
+	res, err := c.doRequest(http.MethodGet, fmt.Sprintf("/nodes/%s/connections/%d/%d/", nodeName, startTime.Unix(), endTime.Unix()), nil)
 	if err != nil {
 		return 0, err
 	}
@@ -183,7 +184,7 @@ func (c *Client) GetAccounts(index, size int) ([]*Account, error) {
 	}
 
 	// get accounts
-	res, err := c.doRequest(fmt.Sprintf("/accounts/?index=%d&size=%d", index, size))
+	res, err := c.doRequest(http.MethodGet, fmt.Sprintf("/accounts/?index=%d&size=%d", index, size), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -209,7 +210,7 @@ func (c *Client) GetAccountsByUsername(username string, index, size int) ([]*Acc
 	}
 
 	// get accounts
-	res, err := c.doRequest(fmt.Sprintf("/accounts/%s/?index=%d&size=%d", username, index, size))
+	res, err := c.doRequest(http.MethodGet, fmt.Sprintf("/accounts/%s/?index=%d&size=%d", username, index, size), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -239,7 +240,7 @@ func (c *Client) getAccountsByNode(nodeName string, index, size int) ([]*Account
 	}
 
 	// get accounts
-	res, err := c.doRequest(fmt.Sprintf("/nodes/%s/accounts/?index=%d&size=%d", nodeName, index, size))
+	res, err := c.doRequest(http.MethodGet, fmt.Sprintf("/nodes/%s/accounts/?index=%d&size=%d", nodeName, index, size), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -259,7 +260,7 @@ func (c *Client) CountAccounts() (int, error) {
 	type countRes struct {
 		Count int `json:"count"`
 	}
-	res, err := c.doRequest("/accounts/count/")
+	res, err := c.doRequest(http.MethodGet, "/accounts/count/", nil)
 	if err != nil {
 		return 0, err
 	}
