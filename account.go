@@ -105,7 +105,7 @@ func (c *Client) UpdatePassword(username, password string) (int, error) {
 // https://reseller.api.foxyproxy.com/#_common_api_properties
 type commonAPIProperties struct {
 	Comment   string   `json:"comment,omitempty"`
-	NodeNames []string `json:"nodenames,omitempty"`
+	NodeNames []string `json:"nodeNames,omitempty"`
 }
 
 type DeleteAccountsParams struct {
@@ -127,6 +127,33 @@ func (c *Client) DeleteAccounts(username string, params *DeleteAccountsParams) (
 		Count int `json:"count"`
 	}
 	res, err := c.doRequest2(http.MethodPatch, fmt.Sprintf("/accounts/activate/%s/", username), body)
+	if err != nil {
+		return 0, err
+	}
+	bodyBytes, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return 0, err
+	}
+	resJSON := countRes{}
+	if err := json.Unmarshal(bodyBytes, &resJSON); err != nil {
+		return 0, err
+	}
+	return resJSON.Count, nil
+}
+
+// https://reseller.api.foxyproxy.com/#_copy_accounts_from_one_node_to_others
+func (c *Client) CopyAccounts(fromNode string, toNodes []string) (int, error) {
+	params := commonAPIProperties{
+		NodeNames: toNodes,
+	}
+	body, err := json.Marshal(params)
+	if err != nil {
+		return 0, err
+	}
+	type countRes struct {
+		Count int `json:"count"`
+	}
+	res, err := c.doRequest2(http.MethodPost, fmt.Sprintf("/accounts/copy-all/%s/", fromNode), body)
 	if err != nil {
 		return 0, err
 	}
