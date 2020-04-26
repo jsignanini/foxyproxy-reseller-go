@@ -171,3 +171,105 @@ func (c *Client) getHistoricalNodeConnectionTotals(nodeName string, startTime, e
 	}
 	return t.Count, nil
 }
+
+// https://reseller.api.foxyproxy.com/#_get_accounts
+func (c *Client) GetAccounts(index, size int) ([]*Account, error) {
+	// validate input
+	if index < 0 {
+		return nil, fmt.Errorf("index cannot be less than 0")
+	}
+	if size > 100 {
+		return nil, fmt.Errorf("size cannot be larger than 100")
+	}
+
+	// get accounts
+	res, err := c.doRequest(fmt.Sprintf("/accounts/?index=%d&size=%d", index, size))
+	if err != nil {
+		return nil, err
+	}
+	bodyBytes, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	accounts := []*Account{}
+	if err := json.Unmarshal(bodyBytes, &accounts); err != nil {
+		return nil, err
+	}
+	return accounts, nil
+}
+
+// https://reseller.api.foxyproxy.com/#_get_accounts_by_username
+func (c *Client) GetAccountsByUsername(username string, index, size int) ([]*Account, error) {
+	// validate input
+	if index < 0 {
+		return nil, fmt.Errorf("index cannot be less than 0")
+	}
+	if size > 100 {
+		return nil, fmt.Errorf("size cannot be larger than 100")
+	}
+
+	// get accounts
+	res, err := c.doRequest(fmt.Sprintf("/accounts/%s/?index=%d&size=%d", username, index, size))
+	if err != nil {
+		return nil, err
+	}
+	bodyBytes, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	accounts := []*Account{}
+	if err := json.Unmarshal(bodyBytes, &accounts); err != nil {
+		return nil, err
+	}
+	return accounts, nil
+}
+
+// https://reseller.api.foxyproxy.com/#_get_accounts_by_node
+func (c *Client) GetAccountsByNode(nodeName string, index, size int) ([]*Account, error) {
+	return c.getAccountsByNode(nodeName, index, size)
+}
+
+func (c *Client) getAccountsByNode(nodeName string, index, size int) ([]*Account, error) {
+	// validate input
+	if index < 0 {
+		return nil, fmt.Errorf("index cannot be less than 0")
+	}
+	if size > 100 {
+		return nil, fmt.Errorf("size cannot be larger than 100")
+	}
+
+	// get accounts
+	res, err := c.doRequest(fmt.Sprintf("/nodes/%s/accounts/?index=%d&size=%d", nodeName, index, size))
+	if err != nil {
+		return nil, err
+	}
+	bodyBytes, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	accounts := []*Account{}
+	if err := json.Unmarshal(bodyBytes, &accounts); err != nil {
+		return nil, err
+	}
+	return accounts, nil
+}
+
+// https://reseller.api.foxyproxy.com/#_count_accounts
+func (c *Client) CountAccounts() (int, error) {
+	type countRes struct {
+		Count int `json:"count"`
+	}
+	res, err := c.doRequest("/accounts/count/")
+	if err != nil {
+		return 0, err
+	}
+	bodyBytes, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return 0, err
+	}
+	resJSON := countRes{}
+	if err := json.Unmarshal(bodyBytes, &resJSON); err != nil {
+		return 0, err
+	}
+	return resJSON.Count, nil
+}

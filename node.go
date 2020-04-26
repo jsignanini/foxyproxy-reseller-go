@@ -45,3 +45,8 @@ func (n *Node) GetTrafficByAccount(startTime, endTime time.Time) ([]*NodeTraffic
 func (n *Node) GetTrafficTotals(startTime, endTime time.Time) (*NodeTrafficTotals, error) {
 	return n.client.getNodeTrafficTotals(n.Name, startTime, endTime)
 }
+
+// https://reseller.api.foxyproxy.com/#_get_accounts_by_node
+func (n *Node) GetAccountsByNode(index, size int) ([]*Account, error) {
+	return n.client.getAccountsByNode(n.Name, index, size)
+}

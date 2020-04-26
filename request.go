@@ -19,12 +19,18 @@ func (c *Client) doRequest(path string) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	if res.StatusCode != http.StatusOK {
-		apiError, err := NewError(res.Body)
-		if err != nil {
-			return nil, err
+
+	switch res.StatusCode {
+	case http.StatusOK, http.StatusNotFound:
+		return res, nil
+	default:
+		if res.StatusCode != http.StatusOK {
+			apiError, err := NewError(res.Body)
+			if err != nil {
+				return nil, err
+			}
+			return nil, apiError
 		}
-		return nil, apiError
+		return res, nil
 	}
-	return res, nil
 }
