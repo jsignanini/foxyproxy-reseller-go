@@ -7,3 +7,15 @@
 
 FoxyProxy Reseller API bindings for Go.
 
+## Installation
+
+Install foxyproxy-reseller-go with:
+```sh
+go get -u github.com/jsignanini/foxyproxy-reseller-go
+```
+
+Then, import it using:
+```go
+import "github.com/jsignanini/foxyproxy-reseller-go"
+```
+
