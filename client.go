@@ -196,6 +196,11 @@ func (c *Client) GetAccounts(index, size int) ([]*Account, error) {
 	if err := json.Unmarshal(bodyBytes, &accounts); err != nil {
 		return nil, err
 	}
+
+	// populate client
+	for _, a := range accounts {
+		a.client = c
+	}
 	return accounts, nil
 }
 
@@ -261,6 +266,180 @@ func (c *Client) CountAccounts() (int, error) {
 		Count int `json:"count"`
 	}
 	res, err := c.doRequest(http.MethodGet, "/accounts/count/", nil)
+	if err != nil {
+		return 0, err
+	}
+	bodyBytes, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return 0, err
+	}
+	resJSON := countRes{}
+	if err := json.Unmarshal(bodyBytes, &resJSON); err != nil {
+		return 0, err
+	}
+	return resJSON.Count, nil
+}
+
+// // https://reseller.api.foxyproxy.com/#_deactivate_accounts
+func (c *Client) DeactivateAccount(username string) (int, error) {
+	return c.deactivateAccount(username, nil)
+}
+
+func (c *Client) deactivateAccount(username string, params *commonAPIProperties) (int, error) {
+	body := []byte{}
+	if params != nil {
+		var err error
+		body, err = json.Marshal(params)
+		if err != nil {
+			return 0, err
+		}
+	}
+	type countRes struct {
+		Count int `json:"count"`
+	}
+	res, err := c.doRequest(http.MethodPatch, fmt.Sprintf("/accounts/deactivate/%s/", username), body)
+	if err != nil {
+		return 0, err
+	}
+	bodyBytes, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return 0, err
+	}
+	resJSON := countRes{}
+	if err := json.Unmarshal(bodyBytes, &resJSON); err != nil {
+		return 0, err
+	}
+	return resJSON.Count, nil
+}
+
+// https://reseller.api.foxyproxy.com/#_activate_accounts
+func (c *Client) ActivateAccount(username string) (int, error) {
+	return c.activateAccount(username, nil)
+}
+
+func (c *Client) activateAccount(username string, params *commonAPIProperties) (int, error) {
+	body := []byte{}
+	if params != nil {
+		var err error
+		body, err = json.Marshal(params)
+		if err != nil {
+			return 0, err
+		}
+	}
+	type countRes struct {
+		Count int `json:"count"`
+	}
+	res, err := c.doRequest(http.MethodPatch, fmt.Sprintf("/accounts/activate/%s/", username), body)
+	if err != nil {
+		return 0, err
+	}
+	bodyBytes, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return 0, err
+	}
+	resJSON := countRes{}
+	if err := json.Unmarshal(bodyBytes, &resJSON); err != nil {
+		return 0, err
+	}
+	return resJSON.Count, nil
+}
+
+// https://reseller.api.foxyproxy.com/#_update_passwords
+func (c *Client) UpdatePassword(username, password string) (int, error) {
+	return c.updatePassword(username, password, nil)
+}
+
+func (c *Client) updatePassword(username, password string, params *commonAPIProperties) (int, error) {
+	// validate input
+	if len(password) < 3 {
+		return 0, fmt.Errorf("password must be more than 3 characters long")
+	}
+	if len(password) > 127 {
+		return 0, fmt.Errorf("password must be less than 127 characters long")
+	}
+
+	type updatePasswordBody struct {
+		Password string `json:"password"`
+		*commonAPIProperties
+	}
+	upb := updatePasswordBody{
+		Password:            password,
+		commonAPIProperties: params,
+	}
+	type countRes struct {
+		Count int `json:"count"`
+	}
+	jsonBody, err := json.Marshal(upb)
+	if err != nil {
+		return 0, err
+	}
+	res, err := c.doRequest(
+		http.MethodPatch,
+		fmt.Sprintf("/accounts/update-password/%s", username),
+		jsonBody,
+	)
+	if err != nil {
+		return 0, err
+	}
+	bodyBytes, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return 0, err
+	}
+	resJSON := countRes{}
+	if err := json.Unmarshal(bodyBytes, &resJSON); err != nil {
+		return 0, err
+	}
+	return resJSON.Count, nil
+}
+
+// https://reseller.api.foxyproxy.com/#_delete_accounts
+func (c *Client) DeleteAccounts(username string, includeHistory bool) (int, error) {
+	return c.deleteAccounts(username, includeHistory, nil)
+}
+func (c *Client) deleteAccounts(username string, includeHistory bool, params *commonAPIProperties) (int, error) {
+	type body struct {
+		IncludeHistory bool `json:"includeHistory"`
+		*commonAPIProperties
+	}
+	b := body{
+		IncludeHistory:      includeHistory,
+		commonAPIProperties: params,
+	}
+	bJSON, err := json.Marshal(b)
+	if err != nil {
+		return 0, err
+	}
+	type countRes struct {
+		Count int `json:"count"`
+	}
+	res, err := c.doRequest(http.MethodPatch, fmt.Sprintf("/accounts/activate/%s/", username), bJSON)
+	if err != nil {
+		return 0, err
+	}
+	bodyBytes, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return 0, err
+	}
+	resJSON := countRes{}
+	if err := json.Unmarshal(bodyBytes, &resJSON); err != nil {
+		return 0, err
+	}
+	return resJSON.Count, nil
+}
+
+// https://reseller.api.foxyproxy.com/#_copy_accounts_from_one_node_to_others
+func (c *Client) CopyAccounts(fromNode string, toNodes []string) (int, error) {
+	params := commonAPIProperties{
+		NodeNames: toNodes,
+	}
+	body, err := json.Marshal(params)
+	if err != nil {
+		return 0, err
+	}
+	type countRes struct {
+		Count int `json:"count"`
+	}
+	res, err := c.doRequest(http.MethodPost, fmt.Sprintf("/accounts/copy-all/%s/", fromNode), body)
 	if err != nil {
 		return 0, err
 	}
