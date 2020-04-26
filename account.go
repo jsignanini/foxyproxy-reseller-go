@@ -101,3 +101,42 @@ func (c *Client) UpdatePassword(username, password string) (int, error) {
 	}
 	return resJSON.Count, nil
 }
+
+// https://reseller.api.foxyproxy.com/#_common_api_properties
+type commonAPIProperties struct {
+	Comment   string   `json:"comment,omitempty"`
+	NodeNames []string `json:"nodenames,omitempty"`
+}
+
+type DeleteAccountsParams struct {
+	IncludeHistory bool `json:"includeHistory"`
+	commonAPIProperties
+}
+
+// https://reseller.api.foxyproxy.com/#_delete_accounts
+func (c *Client) DeleteAccounts(username string, params *DeleteAccountsParams) (int, error) {
+	body := []byte{}
+	if params != nil {
+		var err error
+		body, err = json.Marshal(params)
+		if err != nil {
+			return 0, err
+		}
+	}
+	type countRes struct {
+		Count int `json:"count"`
+	}
+	res, err := c.doRequest2(http.MethodPatch, fmt.Sprintf("/accounts/activate/%s/", username), body)
+	if err != nil {
+		return 0, err
+	}
+	bodyBytes, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return 0, err
+	}
+	resJSON := countRes{}
+	if err := json.Unmarshal(bodyBytes, &resJSON); err != nil {
+		return 0, err
+	}
+	return resJSON.Count, nil
+}
