@@ -1,13 +1,14 @@
 package foxyproxy
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
 )
 
 func (c *Client) doRequest2(method, path string, body []byte) (*http.Response, error) {
 	client := http.Client{}
-	req, err := http.NewRequest(method, fmt.Sprintf("%s%s", c.endpointBaseURL, path), nil)
+	req, err := http.NewRequest(method, fmt.Sprintf("%s%s", c.endpointBaseURL, path), bytes.NewReader(body))
 	if err != nil {
 		return nil, err
 	}
