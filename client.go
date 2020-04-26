@@ -38,12 +38,15 @@ func (c *Client) GetActiveNodeConnectionTotals(nodeName string) (int, error) {
 }
 
 func (c *Client) GetAllNodes(index, size int) ([]*Node, error) {
+	// validate input
 	if index < 0 {
 		return nil, fmt.Errorf("index cannot be less than 0")
 	}
 	if size > 100 {
 		return nil, fmt.Errorf("size cannot be larger than 100")
 	}
+
+	// get nodes
 	res, err := c.doRequest(fmt.Sprintf("/nodes/?index=%d&size=%d", index, size))
 	if err != nil {
 		return nil, err
@@ -56,6 +59,8 @@ func (c *Client) GetAllNodes(index, size int) ([]*Node, error) {
 	if err := json.Unmarshal(bodyBytes, &nodes); err != nil {
 		return nil, err
 	}
+
+	// populate client
 	for _, n := range nodes {
 		n.client = c
 	}
