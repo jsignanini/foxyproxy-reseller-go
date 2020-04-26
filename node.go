@@ -11,11 +11,9 @@ type Node struct {
 	Country     string
 	CountryCode string
 	City        string
+	Services    []*NodeService
 
 	client *Client
-
-	// TODO
-	// Services
 }
 
 func NewNode(c *Client) *Node {
