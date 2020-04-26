@@ -49,3 +49,23 @@ func (c *Client) DeactivateAccounts(username string) (int, error) {
 	}
 	return resJSON.Count, nil
 }
+
+// https://reseller.api.foxyproxy.com/#_activate_accounts
+func (c *Client) ActivateAccounts(username string) (int, error) {
+	type countRes struct {
+		Count int `json:"count"`
+	}
+	res, err := c.doRequest2(http.MethodPatch, fmt.Sprintf("/accounts/activate/%s/", username), nil)
+	if err != nil {
+		return 0, err
+	}
+	bodyBytes, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return 0, err
+	}
+	resJSON := countRes{}
+	if err := json.Unmarshal(bodyBytes, &resJSON); err != nil {
+		return 0, err
+	}
+	return resJSON.Count, nil
+}
