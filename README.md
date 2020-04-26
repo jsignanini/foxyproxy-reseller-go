@@ -7,6 +7,7 @@
 
 FoxyProxy Reseller API bindings for Go.
 
+
 ## Installation
 
 Install foxyproxy-reseller-go with:
@@ -19,3 +20,40 @@ Then, import it using:
 import "github.com/jsignanini/foxyproxy-reseller-go"
 ```
 
+
+## Usage
+
+```go
+package main
+
+import (
+	"fmt"
+
+	"github.com/jsignanini/foxyproxy-reseller-go"
+)
+
+func main() {
+	client := foxyproxy.NewClient(&foxyproxy.NewClientParams{
+		DomainHeader:    "x-domain-header-provided-by-foxyproxy",
+		EndpointBaseURL: "https://reseller.test.api.foxyproxy.com",
+		Username:        "foxyproxy-username",
+		Password:        "foxyproxy-password",
+	})
+
+	// get all nodes
+	nodes, err := client.GetAllNodes(0, 10)
+	if err != nil {
+		panic(err)
+	}
+
+	// iterate nodes and print active connections
+	for _, node := range nodes {
+		actives, err := node.GetActiveConnectionTotals()
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("Node: %s, Total Active Connections: %d\n", node.Name, actives)
+	}
+}
+
+```
