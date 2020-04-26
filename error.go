@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 )
 
+// Error is an api error object.
 type Error struct {
 	Timestamp   string `json:"timestamp"`
 	Status      int    `json:"status"`
@@ -15,6 +16,7 @@ type Error struct {
 	Path        string `json:"path"`
 }
 
+// Error returns a string representation of Error.
 func (e *Error) Error() string {
 	errBytes, err := json.MarshalIndent(e, "", "\t")
 	if err != nil {
@@ -23,6 +25,7 @@ func (e *Error) Error() string {
 	return string(errBytes)
 }
 
+// NewError generates a new Error object.
 func NewError(body io.ReadCloser) (*Error, error) {
 	bodyBytes, err := ioutil.ReadAll(body)
 	if err != nil {

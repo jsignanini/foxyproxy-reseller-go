@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// NodeTrafficTotals is a total traffic count for a node.
 type NodeTrafficTotals struct {
 	TrafficDown float64
 	TrafficUp   float64

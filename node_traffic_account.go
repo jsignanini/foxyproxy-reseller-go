@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// NodeTrafficAccount is a count of a node's traffic.
 type NodeTrafficAccount struct {
 	UID         string
 	Active      bool

@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// NodeConnection is a node connection.
 type NodeConnection struct {
 	UID         string
 	Active      bool
