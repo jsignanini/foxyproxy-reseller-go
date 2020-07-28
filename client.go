@@ -488,7 +488,7 @@ func (c *Client) deleteAccounts(username string, includeHistory bool, params *Co
 		return 0, err
 	}
 
-	res, err := c.doRequest(http.MethodPatch, fmt.Sprintf("/accounts/activate/%s/", username), bJSON)
+	res, err := c.doRequest(http.MethodDelete, fmt.Sprintf("/accounts/%s/", username), bJSON)
 	if err != nil {
 		return 0, err
 	}
